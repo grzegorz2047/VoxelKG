@@ -2,6 +2,7 @@ package pl.voxelkg.center;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,12 +18,14 @@ import pl.voxelkg.center.gameobject.Box;
 
 public class VoxelKG extends ApplicationAdapter {
 
-	public Environment environment;
-	public PerspectiveCamera cam;
-	public CameraInputController camController;
+	private Environment environment;
+	private PerspectiveCamera cam;
+	private CameraInputController camController;
 	private ModelBatch modelBatch;
 	private Chunk chunk;
-	FPSLogger fps;
+	private FPSLogger fps;
+	private AssetManager assets;
+	public ModelInstance space;
 
 	@Override
 	public void create () {
@@ -31,8 +34,8 @@ public class VoxelKG extends ApplicationAdapter {
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 		this.modelBatch = new ModelBatch();
 		this.chunk = new Chunk();
-		for(int x = -4; x < 4; x++){
-			for(int z = -4; z < 4; z++){
+		for(int x = -16; x < 16	; x+=4){
+			for(int z = -16; z < 16; z+=4){
 				this.chunk.generate(x,z);
 			}
 		}
@@ -40,18 +43,28 @@ public class VoxelKG extends ApplicationAdapter {
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(15f, 5f, 15f);
 		cam.near = 1f;
-		cam.far = 300f;
+		cam.far = 16;
 		cam.update();
 
 		camController = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(camController);
 
 		fps = new FPSLogger();
+
+		assets = new AssetManager();
+		assets.load("objects/space/spacesphere.obj", Model.class);
 	}
 
-	Texture t;
+	private Texture t;
+
+	boolean  n = false;
 	@Override
 	public void render () {
+		if(!n && assets.update()){
+			space = new ModelInstance(assets.get("objects/space/spacesphere.obj", Model.class));
+			n=true;
+		}
+
 		Gdx.graphics.setTitle("VoxelKG " + Gdx.graphics.getFramesPerSecond());
 		camController.update();
 
@@ -62,18 +75,23 @@ public class VoxelKG extends ApplicationAdapter {
 		t = new Texture(imageFileHandle);
 
 		this.modelBatch.begin(cam);
-		for(Box box : this.chunk.getCubes()) {
-			if (isVisible(cam, box.getInstance())) {
+		for(Box box : this.chunk.getCubes()){
+			if(isVisible(cam, box.getInstance())){
 				box.getInstance().materials.first().set(TextureAttribute.createDiffuse(t));
 				this.modelBatch.render(box.getInstance(), environment);
 			}
 
 		}
+		if (space != null){
+			this.modelBatch.render(space);
+		}
 		this.modelBatch.end();
 	}
 	private Vector3 position = new Vector3();
+
 	protected boolean isVisible(final Camera cam, final ModelInstance instance) {
 		instance.transform.getTranslation(position);
+
 		return cam.frustum.pointInFrustum(position);
 	}
 	@Override
@@ -82,6 +100,7 @@ public class VoxelKG extends ApplicationAdapter {
 			this.modelBatch.dispose();
 			box.getModel().dispose();
 		}
+		assets.dispose();
 	}
 
 
