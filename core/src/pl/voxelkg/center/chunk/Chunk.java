@@ -1,6 +1,6 @@
 package pl.voxelkg.center.chunk;
 
-import pl.voxelkg.center.gameobject.Box;
+import pl.voxelkg.center.gameobject.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Chunk {
 
-    private List<Box> cubes = new ArrayList<Box>();
+    private List<Block> blocks = new ArrayList<Block>();
 
     private int chunkLength = 4;
     private int chunkWidth = 4;
@@ -27,14 +27,14 @@ public class Chunk {
         for(int i = x; i < chunkLength+x; i++){//x
             for(int j = 0; j < chunkHeight;j++){//y
                 for(int k = z; k < chunkWidth+z; k++){//z
-                    cubes.add(new Box(i,j, k));
-                    System.out.println(i+" "+j+" "+k);
+                    blocks.add(new Block(i,j, k));
+                    //System.out.println(i+" "+j+" "+k);
                 }
             }
         }
     }
 
-    public List<Box> getCubes() {
-        return cubes;
+    public List<Block> getBlocks() {
+        return blocks;
     }
 }

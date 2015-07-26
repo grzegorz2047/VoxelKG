@@ -5,11 +5,9 @@ package pl.voxelkg.center.gameobject;
  */
 public class GameObject {
     // the collider
-    public final Box boxCollider;
-
     // other GameObject specific data
 
     public GameObject(int x, int y, int z) {
-        boxCollider = new Box(x, y, z);
+
     }
 }

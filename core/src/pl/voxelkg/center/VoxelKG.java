@@ -3,18 +3,14 @@ package pl.voxelkg.center;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import pl.voxelkg.center.chunk.Chunk;
-import pl.voxelkg.center.gameobject.Box;
+import pl.voxelkg.center.gameobject.block.Block;
 
 public class VoxelKG extends ApplicationAdapter {
 
@@ -71,14 +67,12 @@ public class VoxelKG extends ApplicationAdapter {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		FileHandle imageFileHandle = Gdx.files.internal("textures/badlogic.jpg");
-		t = new Texture(imageFileHandle);
+
 
 		this.modelBatch.begin(cam);
-		for(Box box : this.chunk.getCubes()){
-			if(isVisible(cam, box.getInstance())){
-				box.getInstance().materials.first().set(TextureAttribute.createDiffuse(t));
-				this.modelBatch.render(box.getInstance(), environment);
+		for(Block block : this.chunk.getCubes()){
+			if(isVisible(cam, block.getInstance())){
+				this.modelBatch.render(block.getInstance(), environment);
 			}
 
 		}
@@ -96,9 +90,9 @@ public class VoxelKG extends ApplicationAdapter {
 	}
 	@Override
 	public void dispose() {
-		for(Box box : this.chunk.getCubes()) {
+		for(Block block : this.chunk.getCubes()) {
 			this.modelBatch.dispose();
-			box.getModel().dispose();
+			block.getModel().dispose();
 		}
 		assets.dispose();
 	}

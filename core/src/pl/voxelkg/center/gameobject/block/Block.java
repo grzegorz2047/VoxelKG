@@ -1,4 +1,4 @@
-package pl.voxelkg.center.gameobject;
+package pl.voxelkg.center.gameobject.block;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Created by Acer pc on 2015-07-25.
  */
-public class Box {
+public class Block {
     private final Vector3 location;
     private float size = 1;
     private final Vector3 center;
@@ -43,11 +43,17 @@ public class Box {
         return instance;
     }
 
-    public Box(float x, float y, float z) {
+
+    private static FileHandle imageFileHandle = Gdx.files.internal("textures/badlogic.jpg");
+    private static Texture t = new Texture(imageFileHandle);
+
+
+    public Block(float x, float y, float z) {
         this.size = 1;
         this.center = new Vector3(x/2,y/2, z/2);
         this.location = new Vector3(x,y,z);
         this.model = new Model();
+
         generateMesh();
     }
     private void generateMesh(){
@@ -56,6 +62,8 @@ public class Box {
                 new Material(), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
         instance = new ModelInstance(model);
         instance.transform.setToTranslation(this.location);
+        instance.materials.first().set(TextureAttribute.createDiffuse(t));
+
     }
 
     public void update(final Vector3 position) {
