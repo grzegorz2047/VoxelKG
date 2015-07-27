@@ -43,6 +43,19 @@ public class Block {
         return instance;
     }
 
+    public double distance(Vector3 loc){
+        float x1 = this.location.x;//origin loc
+        float x2 = loc.x;//second loc
+
+        float y1 = this.location.y;
+        float y2 = loc.y;
+
+        float z1 = this.location.z;
+        float z2 = loc.z;
+
+        double d = Math.sqrt( Math.pow(x2-x1,2)+Math.pow(y2-y1,2)+Math.pow(z2-z1,2));
+        return d;
+    }
 
     private static FileHandle imageFileHandle = Gdx.files.internal("textures/badlogic.jpg");
     private static Texture t = new Texture(imageFileHandle);
@@ -56,7 +69,11 @@ public class Block {
 
         generateMesh();
     }
-    private void generateMesh(){
+    public void generateMesh(){
+        if(this.location.y>64){
+            instance = new ModelInstance(model);
+            return;
+        }
         ModelBuilder modelBuilder = new ModelBuilder();
         model = modelBuilder.createBox(size, size, size,
                 new Material(), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);

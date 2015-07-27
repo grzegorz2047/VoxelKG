@@ -39,10 +39,11 @@ public class VoxelKG extends ApplicationAdapter {
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(15f, 5f, 15f);
 		cam.near = 1f;
-		cam.far = 16;
+		cam.far = 500f;
 		cam.update();
 
 		camController = new CameraInputController(cam);
+
 		Gdx.input.setInputProcessor(camController);
 
 		fps = new FPSLogger();
@@ -61,17 +62,18 @@ public class VoxelKG extends ApplicationAdapter {
 			n=true;
 		}
 
-		Gdx.graphics.setTitle("VoxelKG " + Gdx.graphics.getFramesPerSecond());
+
 		camController.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 
-
+		int i = 0;
 		this.modelBatch.begin(cam);
-		for(Block block : this.chunk.getCubes()){
-			if(isVisible(cam, block.getInstance())){
+		for(Block block : this.chunk.getBlocks()){
+			if(isVisible(cam, block.getInstance()) && block.distance(cam.position) < 16 ){
+				i++;
 				this.modelBatch.render(block.getInstance(), environment);
 			}
 
@@ -80,6 +82,7 @@ public class VoxelKG extends ApplicationAdapter {
 			this.modelBatch.render(space);
 		}
 		this.modelBatch.end();
+		Gdx.graphics.setTitle("VoxelKG " + Gdx.graphics.getFramesPerSecond()+" obj: "+i);
 	}
 	private Vector3 position = new Vector3();
 
@@ -90,7 +93,8 @@ public class VoxelKG extends ApplicationAdapter {
 	}
 	@Override
 	public void dispose() {
-		for(Block block : this.chunk.getCubes()) {
+
+		for(Block block : this.chunk.getBlocks()) {
 			this.modelBatch.dispose();
 			block.getModel().dispose();
 		}
