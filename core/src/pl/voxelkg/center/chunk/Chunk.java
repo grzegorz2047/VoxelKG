@@ -11,13 +11,13 @@ import java.util.List;
 public class Chunk {
 
     private long seed = 123456789;
-    //private List<Block> blocks = new ArrayList<Block>();
+    private List<Block> blocks = new ArrayList<Block>();
 
-    private Block[][][] blocks = new Block[16][128][16];// >> << bedzie potrzebne
+    //private Block[][][] blocks = new Block[16][128][16];// >> << bedzie potrzebne
 
     private int chunkLength = 4;
     private int chunkWidth = 4;
-    private int chunkHeight = 128;
+    private int chunkHeight = 8;
     private int posX, posZ;
 
     public Chunk(int chunkLength, int chunkHeight, int chunkWidth){
@@ -34,7 +34,7 @@ public class Chunk {
         for(int i = x; i < chunkLength+x; i++){//x
             for(int j = -4; j < chunkHeight;j++){//y
                 for(int k = z; k < chunkWidth+z; k++){//z
-
+                    System.out.println("x "+i+" "+j+" "+k);
                     noise = SimplexNoise.noise(i,j,k);
                     floor = Math.floor(noise * 10);
                     if(i%2==0){
@@ -44,14 +44,14 @@ public class Chunk {
                         floor=0;
                     }
                     //System.out.println("Noise "+noise+" Floor: "+floor);
-                    blocks[i][j][k] = new Block(i + (float) floor, (j + (float) floor), k+(float) floor);
+                    blocks.add( new Block(i + (float) floor, (j + (float) floor), k+(float) floor));
                 //System.out.println(i+" "+j+" "+k);
                 }
             }
         }
     }
 
-    public Block[][][] getBlocks() {
+    public List<Block> getBlocks() {
         return blocks;
     }
 }

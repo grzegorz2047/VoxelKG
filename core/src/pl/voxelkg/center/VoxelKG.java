@@ -8,15 +8,18 @@ import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.Vector3;
 import pl.voxelkg.center.chunk.Chunk;
 import pl.voxelkg.center.gameobject.block.Block;
+
+import java.util.Arrays;
 
 public class VoxelKG extends ApplicationAdapter {
 
 	private Environment environment;
 	private PerspectiveCamera cam;
-	private CameraInputController camController;
+	private FirstPersonCameraController camController;
 	private ModelBatch modelBatch;
 	private Chunk chunk;
 	private FPSLogger fps;
@@ -37,12 +40,14 @@ public class VoxelKG extends ApplicationAdapter {
 		}
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		cam.position.set(15f, 5f, 15f);
 		cam.near = 1f;
 		cam.far = 500f;
+
 		cam.update();
 
-		camController = new CameraInputController(cam);
+		camController = new FirstPersonCameraController(cam);
 
 		Gdx.input.setInputProcessor(camController);
 
@@ -61,8 +66,6 @@ public class VoxelKG extends ApplicationAdapter {
 			space = new ModelInstance(assets.get("objects/space/spacesphere.obj", Model.class));
 			n=true;
 		}
-
-
 		camController.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -71,10 +74,20 @@ public class VoxelKG extends ApplicationAdapter {
 
 		int i = 0;
 		this.modelBatch.begin(cam);
+
+		Vector3 camLoc = cam.position;
+
+		//for()
+		// Enable face culling- be careful with spriteBatch, might cull sprites as well!
+		Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+
+// What faces to remove with the face culling.
+		Gdx.gl.glCullFace(GL20.GL_BACK);
 		for(Block block : this.chunk.getBlocks()){
-			if(isVisible(cam, block.getInstance()) && block.distance(cam.position) < 16 ){
+			if(isVisible(cam, block.getInstance()) && block.distance(cam.position) < 32 ){
 				i++;
 				this.modelBatch.render(block.getInstance(), environment);
+
 			}
 
 		}
